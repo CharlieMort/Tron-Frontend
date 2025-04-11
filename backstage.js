@@ -2,8 +2,9 @@ const fps = 30;
 const intro_delay = 0.5;
 let c = undefined;
 let canvas = undefined;
-let globalX = 0;
-let globalY = 0;
+const gridSize = 10;
+const gridWidth = 500;
+const gridHeight = 800
 
 setTimeout(() => {
     c = document.getElementById("canvas");
@@ -11,14 +12,13 @@ setTimeout(() => {
     Start();
     setInterval(() => {
         canvas.reset()
-        canvas.translate(globalX, globalY);
         Update();
     }, 1000/fps)
 }, intro_delay)
 
-function Translate(x, y) {
-    globalX += x
-    globalY += y
+function drawRect(x, y, w, h, c) {
+    canvas.fillStyle = c
+    canvas.fillRect(x, y, w, h);
 }
 
 class GameObject {
@@ -37,18 +37,19 @@ class Rect extends GameObject {
     }
 
     Draw() {
-        canvas.fillStyle = this.color
-        canvas.fillRect(this.x, this.y, this.width, this.height);
+        drawRect(this.x, this.y, this.width, this.height, this.color)
     }
 }
 
 class Bike extends GameObject {
-    constructor() {
-        super(20, 20, 200, 300, "#00ffff")
+    constructor(x=200, y=300, color="#00ffff", id) {
+        super(gridSize, gridSize, x, y, color)
         this.body = new Rect(this.width, this.height, this.x, this.y, this.color);
         this.direction = 1
-        this.speed = 2 // has to be a factor of grid size - 20
+        this.speed = 5 // has to be a factor of grid size - 20
         this.turnQ = []
+        this.id = id
+        this.alive = true
     }
 
     signalRight() {
@@ -72,22 +73,24 @@ class Bike extends GameObject {
     }
 
     Update() {
-        switch(this.direction) {
-            case 1:
-                this.y -= this.speed;
-                break;
-            case 2:
-                this.x += this.speed;
-                break;
-            case 3:
-                this.y += this.speed;
-                break;
-            case 4:
-                this.x -= this.speed;
-                break;
+        if (this.alive) {
+            switch(this.direction) {
+                case 1:
+                    this.y -= this.speed;
+                    break;
+                case 2:
+                    this.x += this.speed;
+                    break;
+                case 3:
+                    this.y += this.speed;
+                    break;
+                case 4:
+                    this.x -= this.speed;
+                    break;
+            }
         }
         
-        if (this.x%this.width == 0 && this.y%this.height == 0) {
+        if (this.x%gridSize == 0 && this.y%gridSize == 0) {
             let dir = this.turnQ.pop()
             if (dir == "r") {
                 this.turnRight()
@@ -95,6 +98,11 @@ class Bike extends GameObject {
                 this.turnLeft()
             }
             this.turnQ = []
+            if (grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] != "") {
+                this.alive = false;
+            } else {
+                grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] = `${this.id}`
+            }
         }
 
         this.body.x = this.x
