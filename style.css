@@ -1,0 +1,52 @@
+body {
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes canvas_init {
+    0% {
+        width: 10px;
+        height: 10px;
+    }
+    65% {
+        width: 500px;
+        height: 10px;
+    }
+    100% {
+        width: 500px;
+        height: 800px;
+    }
+}
+
+#canvas {
+    background-color: transparent;
+    border: 1px solid #00ffff;
+    /* width: 10px;
+    height: 10px;
+    animation: 0.75s linear 0s 3 forwards blink,
+                3s ease-out 3s forwards canvas_init; */
+    box-shadow: -2px -2px 8px 0 #00ffff, 
+                2px -2px 8px 0 #00ffff, 
+                2px 2px 8px 0 #00ffff, 
+                -2px 2px 8px 0 #00ffff,
+                inset -2px -2px 8px 0 #00ffff, 
+                inset 2px -2px 8px 0 #00ffff, 
+                inset 2px 2px 8px 0 #00ffff, 
+                inset -2px 2px 8px 0 #00ffff;
+}
