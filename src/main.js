@@ -10,6 +10,21 @@ let gamestate = "titleScreen"
 let localBut;
 let onlineBut;
 
+let openGames = [
+    {
+        id: 0,
+        playerName: "charlie"
+    },
+    {
+        id: 1,
+        playerName: "paul"
+    },
+    {
+        id: 2,
+        playerName: "mark"
+    }
+]
+
 function Start() {
     StartTitle()
 }
@@ -19,6 +34,12 @@ function Update() {
         case "titleScreen":
             TitleLoop()
             break;
+        case "lobby":
+            LobbyLoop()
+            break;
+        case "hosting":
+            HostLoop()
+            break
         case "gaming":
             GameLoop()
             break;
@@ -26,10 +47,13 @@ function Update() {
 }
 
 function StartTitle() {
+    gamestate = "titleScreen"
     localBut = new Button("Local", 25, 500, 200, 100, 35, "#0ff", "#0ff", "Orbitron", () => {
         StartGame()
     })
-    onlineBut = new Button("Online", 275, 500, 200, 100, 35, "#0ff", "#0ff", "Orbitron", () => {console.log("online")})
+    onlineBut = new Button("Online", 275, 500, 200, 100, 35, "#0ff", "#0ff", "Orbitron", () => {
+        StartLobby()
+    })
 }
 
 function TitleLoop() {
@@ -38,7 +62,41 @@ function TitleLoop() {
     onlineBut.Update()
 }
 
+function StartLobby() {
+    gamestate = "lobby"
+    createGame = new Button("Host A Game", 50, 50, 400, 100, 50, "#0ff", "#0ff", "Orbitron", () => {
+        StartHost()
+    })
+    openGames = openGames.map((game, idx) => {
+        return {
+            id: game.id,
+            playerName: game.playerName,
+            button: new Button(`Join ${game.playerName}`, 50, 275+(idx*125), 400, 100, 30, "#0ff", "#0ff", "Orbitron", () => {
+                console.log(`Joined ${game.playerName}`)
+            })
+        }
+    })
+}
+
+function LobbyLoop() {
+    createGame.Update()
+    drawText("Open Games", gridWidth/2, 225, 40, "#0ff", "Orbitron")
+    openGames.map((game) => {
+        game.button.Update()
+    })
+}
+
+function StartHost() {
+    gamestate = "hosting"
+}
+
+function HostLoop() {
+    drawText("Hosting Game", gridWidth/2, gridHeight/2-50, 50, "#00ffff", "Orbitron", "#00cccc")
+    drawText("Waiting for player to join", gridWidth/2, gridHeight/2, 35, "#00ffff", "Orbitron", "#00cccc")
+}
+
 function StartGame() {
+    gamestate = "gaming"
     player = new Bike(100, 600)
     player2 = new Bike(400, 600, "#FFA500", 1)
     document.addEventListener('keypress', function(event) {
@@ -60,7 +118,6 @@ function StartGame() {
     });
 
     resetGrid()
-    gamestate = "gaming"
 }
 
 function GameLoop() {

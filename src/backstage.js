@@ -1,5 +1,5 @@
 const fps = 30;
-const intro_delay = 6500;
+const intro_delay = 1;
 let c = undefined;
 let canvas = undefined;
 const gridSize = 10;
