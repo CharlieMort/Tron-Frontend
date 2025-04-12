@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Replace "." with the actual path of the directory you want to expose.
-	directoryPath := "./src"
+	directoryPath := "/app/src"
 
 	// Check if the directory exists
 	_, err := os.Stat(directoryPath)
