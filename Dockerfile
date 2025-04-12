@@ -9,6 +9,5 @@ FROM alpine:3.17
 RUN apk --no-cache add ca-certificates
 WORKDIR /
 COPY --from=build /app /app
-COPY . /app/src
 EXPOSE 3000
 ENTRYPOINT /app/tron-frontend
