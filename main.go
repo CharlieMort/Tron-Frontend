@@ -7,6 +7,6 @@ import (
 
 func main() {
 	fmt.Println("Welcome...")
-	http.Handle("/", http.FileServer(http.Dir("./src")))
+	http.Handle("/", http.FileServer(http.Dir("/app/src")))
 	http.ListenAndServe(":3000", nil)
 }
