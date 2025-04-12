@@ -1,7 +1,7 @@
 FROM golang:1.19.2 as builder
 WORKDIR /app
 RUN go mod init tron-frontend
-COPY *.go ./
+COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /tron-frontend
 
 FROM gcr.io/distroless/base-debian11
