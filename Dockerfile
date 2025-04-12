@@ -6,7 +6,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /tron-frontend
 
 FROM gcr.io/distroless/base-debian11
 WORKDIR /
-COPY --from=builder /tron-frontend /tron-frontend
+COPY --from=builder . .
 ENV PORT 3000
 USER nonroot:nonroot
 CMD ["/tron-frontend"]
