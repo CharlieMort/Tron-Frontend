@@ -9,4 +9,4 @@ WORKDIR /
 COPY --from=builder /app /app
 ENV PORT 3000
 USER nonroot:nonroot
-CMD ["/app/tron-frontend"]
+CMD ["ls /app", "/app/tron-frontend"]
