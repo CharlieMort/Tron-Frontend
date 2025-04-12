@@ -11,3 +11,5 @@ steps:
   # Step 3: Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'europe-west2-docker.pkg.dev/blissful-flame-456616-k0/tron-repo/tron-frontend:v1.0']
+options:
+ logging: CLOUD_LOGGING_ONLY
