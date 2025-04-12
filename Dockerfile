@@ -10,4 +10,4 @@ COPY --from=builder /tron-frontend /tron-frontend
 COPY ./src .
 ENV PORT 3000
 USER nonroot:nonroot
-CMD ["tron-frontend"]
+CMD ["/tron-frontend"]
