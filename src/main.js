@@ -7,7 +7,7 @@ let running = true;
 let countdown = 0;
 let gamestate = "titleScreen"
 let gridRemove = []
-
+let scoretext = "0 - 0"
 let localBut;
 let onlineBut;
 let oppColor;
@@ -50,6 +50,9 @@ function SetupWebsocket() {
                 posData = packet.data.split(",")
                 grid[parseInt(posData[1])][parseInt(posData[0])] = posData[2]?posData[2]:""
                 break;
+            case "endRound":
+                scoretext = packet.data
+                nextRound()
         }
     })
 }
@@ -161,6 +164,13 @@ function StartGameOnline() {
 function GameLoopOnline() {
     player.Update()
     if (running) {
+        if (!player.alive) {
+            ws.send(JSON.stringify({
+                Type: "playerDead",
+                Data: ""
+            }))
+        }
+
         let ngr = []
         for (let i = 0; i<gridRemove.length; i++) {
             gridRemove[i][2] -= 1000/fps
@@ -174,7 +184,19 @@ function GameLoopOnline() {
             }
         }
         gridRemove = ngr
+    } else if (countdown >= 0.1) {
+        countdown -= 1/fps
+        canvas.font = "100px Arial";
+        canvas.textAlign = "center"
+        canvas.fillStyle = "#00ffff"
+        canvas.fillText(`${Math.ceil(countdown)}`, gridWidth/2, gridHeight/2-100)
+    } else {
+        resetGrid()
+        player.reset()
+        running = true
     }
+
+    drawText(`${scoretext}`, gridWidth/2, gridHeight/2, 100, "#ffa500")
 
     grid.map((row, r) => {
         row.map((ele, c) => {
