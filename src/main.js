@@ -167,7 +167,7 @@ function GameLoopOnline() {
             if (gridRemove[i][2] < 1000/fps) {
                 ws.send(JSON.stringify({
                     Type: "gameUpdate",
-                    Data: `${xgrid},${ygrid}, `
+                    Data: `${gridRemove[i][0]},${gridRemove[i][1]}, `
                 }))
             } else {
                 ngr.push(gridRemove[i])
