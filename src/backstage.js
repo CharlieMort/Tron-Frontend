@@ -223,12 +223,27 @@ class Bike extends GameObject {
                 this.alive = false;
             } else {
                 if (this.online) {
+                    let xgrid = Math.floor(this.x/gridSize)
+                    let ygrid = Math.floor(this.y/gridSize)
                     ws.send(JSON.stringify({
                         Type: "gameUpdate",
-                        Data: `${Math.floor(this.x/gridSize)},${Math.floor(this.y/gridSize)},${this.id}`
+                        Data: `${xgrid},${ygrid},${this.id}`
                     }))
+                    setTimeout(() => {
+                        ws.send(JSON.stringify({
+                            Type: "gameUpdate",
+                            Data: `${xgrid},${ygrid}, `
+                        }))
+                    }, 7000)
                 } else {
-                    grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] = `${this.id}`
+                    let xgrid = Math.floor(this.x/gridSize)
+                    let ygrid = Math.floor(this.y/gridSize)
+                    grid[ygrid][xgrid] = `${this.id}`
+                    setTimeout(() => {
+                        if (running) {
+                            grid[ygrid][xgrid] = ``
+                        }
+                    }, 7000)
                 }
             }
         }
