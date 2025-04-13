@@ -207,7 +207,7 @@ class Bike extends GameObject {
             }
         }
 
-        if (this.x < 0 || this.y < 0) {
+        if (this.x < 0 || this.y < 0 || this.x > gridWidth || this.y > gridHeight) {
             this.alive = false;
         }
         
@@ -229,21 +229,12 @@ class Bike extends GameObject {
                         Type: "gameUpdate",
                         Data: `${xgrid},${ygrid},${this.id}`
                     }))
-                    setTimeout(() => {
-                        ws.send(JSON.stringify({
-                            Type: "gameUpdate",
-                            Data: `${xgrid},${ygrid}, `
-                        }))
-                    }, 6000)
+                    gridRemove.push([xgrid, ygrid, 6000])
                 } else {
                     let xgrid = Math.floor(this.x/gridSize)
                     let ygrid = Math.floor(this.y/gridSize)
                     grid[ygrid][xgrid] = `${this.id}`
-                    setTimeout(() => {
-                        if (running) {
-                            grid[ygrid][xgrid] = ``
-                        }
-                    }, 6000)
+                    gridRemove.push([xgrid, ygrid, 6000])
                 }
             }
         }

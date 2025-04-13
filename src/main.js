@@ -6,6 +6,7 @@ let score2 = 0;
 let running = true;
 let countdown = 0;
 let gamestate = "titleScreen"
+let gridRemove = []
 
 let localBut;
 let onlineBut;
@@ -159,6 +160,21 @@ function StartGameOnline() {
 
 function GameLoopOnline() {
     player.Update()
+    if (running) {
+        let ngr = []
+        for (let i = 0; i<gridRemove.length; i++) {
+            gridRemove[i][2] -= 1000/fps
+            if (gridRemove[i][2] < 1000/fps) {
+                ws.send(JSON.stringify({
+                    Type: "gameUpdate",
+                    Data: `${xgrid},${ygrid}, `
+                }))
+            } else {
+                ngr.push(gridRemove[i])
+            }
+        }
+        gridRemove = ngr
+    }
 
     grid.map((row, r) => {
         row.map((ele, c) => {
@@ -212,6 +228,16 @@ function GameLoopLocal() {
         if (!player2.alive && !player.alive) {
             nextRound()
         }
+        let ngr = []
+        for (let i = 0; i<gridRemove.length; i++) {
+            gridRemove[i][2] -= 1000/fps
+            if (gridRemove[i][2] < 1000/fps) {
+                grid[gridRemove[i][1]][gridRemove[i][0]] = ""
+            } else {
+                ngr.push(gridRemove[i])
+            }
+        }
+        gridRemove = ngr
     } else if (countdown >= 0.1) {
         countdown -= 1/fps
         canvas.font = "100px Arial";
@@ -256,4 +282,5 @@ function resetGrid() {
         }
         grid.push(tmp)
     }
+    gridRemove = []
 }
