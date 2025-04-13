@@ -48,7 +48,7 @@ function SetupWebsocket() {
                 break;
             case "gameData":
                 posData = packet.data.split(",")
-                grid[parseInt(posData[1])][parseInt(posData[0])] = posData[2]
+                grid[parseInt(posData[1])][parseInt(posData[0])] = posData[2]?posData[2]:""
                 break;
         }
     })
@@ -167,7 +167,7 @@ function GameLoopOnline() {
             if (gridRemove[i][2] < 1000/fps) {
                 ws.send(JSON.stringify({
                     Type: "gameUpdate",
-                    Data: `${gridRemove[i][0]},${gridRemove[i][1]}, `
+                    Data: `${gridRemove[i][0]},${gridRemove[i][1]},5`
                 }))
             } else {
                 ngr.push(gridRemove[i])
@@ -180,7 +180,7 @@ function GameLoopOnline() {
         row.map((ele, c) => {
             if (ele == `${player.id}`) {
                 drawRect(c*gridSize, r*gridSize, gridSize, gridSize, player.color)
-            } else if (ele != "" && ele != " ") {
+            } else if (ele != "5") {
                 drawRect(c*gridSize, r*gridSize, gridSize, gridSize, oppColor)
             }
         })
@@ -232,7 +232,7 @@ function GameLoopLocal() {
         for (let i = 0; i<gridRemove.length; i++) {
             gridRemove[i][2] -= 1000/fps
             if (gridRemove[i][2] < 1000/fps) {
-                grid[gridRemove[i][1]][gridRemove[i][0]] = ""
+                grid[gridRemove[i][1]][gridRemove[i][0]] = "5"
             } else {
                 ngr.push(gridRemove[i])
             }
@@ -278,7 +278,7 @@ function resetGrid() {
     for (let i = 0; i<gridHeight/gridSize; i++) {
         let tmp = []
         for (let j = 0; j<gridWidth/gridSize; j++) {
-            tmp.push("");
+            tmp.push("5");
         }
         grid.push(tmp)
     }

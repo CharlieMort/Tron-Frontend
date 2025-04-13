@@ -219,7 +219,7 @@ class Bike extends GameObject {
                 this.turnLeft()
             }
             this.turnQ = []
-            if (grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] != "") {
+            if (grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] != "5") {
                 this.alive = false;
             } else {
                 if (this.online) {
