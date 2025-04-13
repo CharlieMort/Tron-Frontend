@@ -16,7 +16,7 @@ let ws
 let openGames = []
 
 function SetupWebsocket() {
-    ws = new WebSocket("http://localhost:3001/ws")
+    ws = new WebSocket("https://tron-backend-320874917687.us-central1.run.app:3000/ws")
     ws.addEventListener("open", (event) => {
         StartLobby()
     })
