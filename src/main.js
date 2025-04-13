@@ -9,21 +9,49 @@ let gamestate = "titleScreen"
 
 let localBut;
 let onlineBut;
+let oppColor;
 
-let openGames = [
-    {
-        id: 0,
-        playerName: "charlie"
-    },
-    {
-        id: 1,
-        playerName: "paul"
-    },
-    {
-        id: 2,
-        playerName: "mark"
-    }
-]
+let ws
+
+let openGames = []
+
+function SetupWebsocket() {
+    ws = new WebSocket("http://localhost:3001/ws")
+    ws.addEventListener("open", (event) => {
+        StartLobby()
+    })
+    ws.addEventListener("message", (event) => {
+        let packet = JSON.parse(event.data)
+        switch(packet.type) {
+            case "clientData":
+                console.log("yes")
+                break;
+            case "gameList":
+                openGamesArr = JSON.parse(packet.data)
+                openGames = openGamesArr.map((game, idx) => {
+                    return {
+                        id: game,
+                        button: new Button(`Join ${game}`, 50, 275+(idx*125), 400, 100, 30, "#0ff", "#0ff", "Orbitron", () => {
+                            ws.send(JSON.stringify({
+                                type: "joinGame",
+                                data: game
+                            }))
+                        })
+                    }
+                })
+                break;
+            case "startGame":
+                playerPos = packet.data
+                console.log(playerPos)
+                StartGameOnline()
+                break;
+            case "gameData":
+                posData = packet.data.split(",")
+                grid[parseInt(posData[1])][parseInt(posData[0])] = posData[2]
+                break;
+        }
+    })
+}
 
 function Start() {
     StartTitle()
@@ -40,8 +68,11 @@ function Update() {
         case "hosting":
             HostLoop()
             break
-        case "gaming":
-            GameLoop()
+        case "gaminglocal":
+            GameLoopLocal()
+            break;
+        case "gamingonline":
+            GameLoopOnline()
             break;
     }
 }
@@ -49,10 +80,10 @@ function Update() {
 function StartTitle() {
     gamestate = "titleScreen"
     localBut = new Button("Local", 25, 500, 200, 100, 35, "#0ff", "#0ff", "Orbitron", () => {
-        StartGame()
+        StartGameLocal()
     })
     onlineBut = new Button("Online", 275, 500, 200, 100, 35, "#0ff", "#0ff", "Orbitron", () => {
-        StartLobby()
+        SetupWebsocket()
     })
 }
 
@@ -65,21 +96,28 @@ function TitleLoop() {
 function StartLobby() {
     gamestate = "lobby"
     createGame = new Button("Host A Game", 50, 50, 400, 100, 50, "#0ff", "#0ff", "Orbitron", () => {
+        ws.send(JSON.stringify({
+            type: "hostGame",
+            data: ""
+        }))
         StartHost()
     })
-    openGames = openGames.map((game, idx) => {
-        return {
-            id: game.id,
-            playerName: game.playerName,
-            button: new Button(`Join ${game.playerName}`, 50, 275+(idx*125), 400, 100, 30, "#0ff", "#0ff", "Orbitron", () => {
-                console.log(`Joined ${game.playerName}`)
-            })
-        }
+    refresh = new Button("⟳", 25, 200, 50, 50, 30, "#0ff", "#0ff", "Arial", () => {
+        ws.send(JSON.stringify({
+            type: "getGames",
+            data: ""
+        }))
     })
+    ws.send(JSON.stringify({
+        type: "getGames",
+        data: ""
+    }))
+    openGames = []
 }
 
 function LobbyLoop() {
     createGame.Update()
+    refresh.Update()
     drawText("Open Games", gridWidth/2, 225, 40, "#0ff", "Orbitron")
     openGames.map((game) => {
         game.button.Update()
@@ -95,8 +133,45 @@ function HostLoop() {
     drawText("Waiting for player to join", gridWidth/2, gridHeight/2, 35, "#00ffff", "Orbitron", "#00cccc")
 }
 
-function StartGame() {
-    gamestate = "gaming"
+function StartGameOnline() {
+    gamestate = "gamingonline"
+    if (playerPos == 0) {
+        player = new Bike(100, 600, "#00ffff", "#0ff", true)
+        oppColor = "#ffa500"
+    } else {
+        player = new Bike(400, 600, "#FFA500", "#ffa500", true)
+        oppColor = "#00ffff"
+    }
+    resetGrid()
+
+    document.addEventListener('keypress', function(event) {
+        switch(event.key.toLowerCase()) {
+            case "d":
+                player.signalRight()
+                break;
+            case "a":
+                player.signalLeft()
+                break;
+        }
+    });
+}
+
+function GameLoopOnline() {
+    player.Update()
+
+    grid.map((row, r) => {
+        row.map((ele, c) => {
+            if (ele == `${player.id}`) {
+                drawRect(c*gridSize, r*gridSize, gridSize, gridSize, player.color)
+            } else if (ele != "") {
+                drawRect(c*gridSize, r*gridSize, gridSize, gridSize, oppColor)
+            }
+        })
+    })
+}
+
+function StartGameLocal() {
+    gamestate = "gaminglocal"
     player = new Bike(100, 600)
     player2 = new Bike(400, 600, "#FFA500", 1)
     document.addEventListener('keypress', function(event) {
@@ -120,7 +195,7 @@ function StartGame() {
     resetGrid()
 }
 
-function GameLoop() {
+function GameLoopLocal() {
     player.Update()
     player2.Update()
 

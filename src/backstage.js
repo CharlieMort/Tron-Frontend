@@ -4,7 +4,7 @@ let c = undefined;
 let canvas = undefined;
 const gridSize = 10;
 const gridWidth = 500;
-const gridHeight = 800
+const gridHeight = 800;
 let mouseX = 0
 let mouseY = 0
 let clicked = false
@@ -147,7 +147,7 @@ class Rect extends GameObject {
 }
 
 class Bike extends GameObject {
-    constructor(x=200, y=300, color="#00ffff", id) {
+    constructor(x=200, y=300, color="#00ffff", id, online=false) {
         super(gridSize, gridSize, x, y, color)
         this.startX = x
         this.startY = y
@@ -157,6 +157,7 @@ class Bike extends GameObject {
         this.turnQ = []
         this.id = id
         this.alive = true
+        this.online = online
     }
 
     reset() {
@@ -221,7 +222,14 @@ class Bike extends GameObject {
             if (grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] != "") {
                 this.alive = false;
             } else {
-                grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] = `${this.id}`
+                if (this.online) {
+                    ws.send(JSON.stringify({
+                        Type: "gameUpdate",
+                        Data: `${Math.floor(this.x/gridSize)},${Math.floor(this.y/gridSize)},${this.id}`
+                    }))
+                } else {
+                    grid[Math.floor(this.y/gridSize)][Math.floor(this.x/gridSize)] = `${this.id}`
+                }
             }
         }
 
