@@ -16,7 +16,7 @@ let ws
 let openGames = []
 
 function SetupWebsocket() {
-    ws = new WebSocket("http://tron-backend-320874917687.us-central1.run.app:3000/ws")
+    ws = new WebSocket("http://86.30.150.227:3001/ws")
     ws.addEventListener("open", (event) => {
         StartLobby()
     })
@@ -138,6 +138,7 @@ function StartGameOnline() {
     if (playerPos == 0) {
         player = new Bike(100, 600, "#00ffff", "#0ff", true)
         oppColor = "#ffa500"
+        c.style.borderColor = "#ffa500"
     } else {
         player = new Bike(400, 600, "#FFA500", "#ffa500", true)
         oppColor = "#00ffff"
