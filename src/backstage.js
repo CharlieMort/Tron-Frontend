@@ -234,7 +234,7 @@ class Bike extends GameObject {
                             Type: "gameUpdate",
                             Data: `${xgrid},${ygrid}, `
                         }))
-                    }, 7000)
+                    }, 6000)
                 } else {
                     let xgrid = Math.floor(this.x/gridSize)
                     let ygrid = Math.floor(this.y/gridSize)
@@ -243,7 +243,7 @@ class Bike extends GameObject {
                         if (running) {
                             grid[ygrid][xgrid] = ``
                         }
-                    }, 7000)
+                    }, 6000)
                 }
             }
         }
