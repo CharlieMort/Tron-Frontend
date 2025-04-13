@@ -164,7 +164,7 @@ function GameLoopOnline() {
         row.map((ele, c) => {
             if (ele == `${player.id}`) {
                 drawRect(c*gridSize, r*gridSize, gridSize, gridSize, player.color)
-            } else if (ele != "" || ele != " ") {
+            } else if (ele != "" && ele != " ") {
                 drawRect(c*gridSize, r*gridSize, gridSize, gridSize, oppColor)
             }
         })
